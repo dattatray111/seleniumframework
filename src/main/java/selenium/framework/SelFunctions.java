@@ -1,24 +1,47 @@
 package selenium.framework;
 
+import java.sql.Driver;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.v126.page.model.Screenshot;
+
+import selenium.framework.*;
+
 import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.model.Media;
 
-public class SelFunctions extends BaseClass {
+import io.cucumber.java.Scenario;
 
-	public static void drClick(String xpath, String eleName) throws Exception {
+public class SelFunctions extends BaseClass
+{	
+	    WebDriver driver;
+	    Scenario scenario;
+	
+	public SelFunctions(WebDriver driver) {
+		this.driver =  BaseClass.driver;
+	}
+	
+	public  void openUrl(String url)
+	{
+		driver.navigate().to(url);
+	}
+
+	public  void drClick(WebElement ele, String eleName) throws Exception {
 		try {
-			WebElement ele = driver.findElement(By.xpath(xpath));
+			
 			if (ele.isDisplayed()) {
 				try {
 					ele.click();
 					extentLog(Status.PASS, true, "Clicked on webelement " + eleName);
 				} catch (Exception e) {
-					extentLog(Status.FAIL, true, "Unable to click on webelement " + eleName);
+					extentLog(Status.FAIL, false, "Unable to click on webelement " + eleName);
 
 				}
 			} else {
-				extentLog(Status.FAIL, true, eleName + " Webelement is not displayed ");
+				extentLog(Status.FAIL, false, eleName + " Webelement is not displayed ");
 
 			}
 		} catch (Exception e) {
@@ -28,10 +51,9 @@ public class SelFunctions extends BaseClass {
 
 	}
 
-	public static void drSendKeys(String xpath, String textToEnter) throws Exception {
+	public  void drSendKeys(WebElement ele, String textToEnter) throws Exception {
 
 		try {
-			WebElement ele = driver.findElement(By.xpath(xpath));
 
 			if (ele.isDisplayed()) {
 				try {
@@ -42,17 +64,17 @@ public class SelFunctions extends BaseClass {
 					extentLog(Status.FAIL, true, "Not able to Enter text " + textToEnter);
 				}
 			} else {
-				extentLog(Status.FAIL, true, " Webelement is not displayed ");
+				extentLog(Status.FAIL, false, " Webelement is not displayed ");
 			}
 
 		} catch (Exception e) {
-			extentLog(Status.FAIL, true, "Error while Entering Text");
+			extentLog(Status.FAIL, false, "Error while Entering Text");
 			throw new Exception(e.getMessage());
 		}
 
 	}
 	
-	public static void extentLog(Status status, boolean flag,  String msg) throws Exception
+	public  void extentLog(Status status, boolean flag,  String msg) throws Exception
 	{
 		if(status.equals(status.FAIL))
 		{
@@ -64,7 +86,7 @@ public class SelFunctions extends BaseClass {
 		}
 		if(flag)
 		{
-			test.addScreenCaptureFromPath(takeSnapShot(driver,new Exception().getStackTrace()[0].getMethodName()));
+			test.addScreenCaptureFromPath(BaseClass.takeSnapShot(driver));
 		}
 		
 	}
